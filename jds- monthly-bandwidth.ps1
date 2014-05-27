@@ -442,22 +442,40 @@ function HelperFormatHandler {
 
 
 
+<#
+
+0 Traffic Total (volume)
+1 Traffic Total (speed)
+2 Traffic In (volume)
+3 Traffic In (speed)
+4 Traffic Out (volume)
+5 Traffic Out (speed)
+
+#>
+
+
+
 $DailyBandwidthData = Get-PrtgSensorHistoricData -SensorId $WanBandwidthSensorId -StartDate (Get-Date -Day 1 -Hour 0 -Minute 0 -Second 0) | % {
 	$_ | Select-Object DateTime,
-						@{n="DailyVolumeGb";e={$_.ChannelsRaw[0].Value / 1GB}},
-						@{n="DailyVolume";e={$_.ChannelsRaw[0].Value}}
+						#@{n="DailyVolumeGb";e={$_.ChannelsRaw[0].Value / 1GB}},
+						@{n="TrafficTotal";e={$_.ChannelsRaw[0].Value}},
+						@{n="TrafficIn";e={$_.ChannelsRaw[2].Value}},
+						@{n="TrafficOut";e={$_.ChannelsRaw[4].Value}}
 }
 
 
-$SummarizedBandwidthData = $DailyBandwidthData | Measure-Object -Sum -Property DailyVolume
-
+$SummarizedTrafficTotal = $DailyBandwidthData | Measure-Object -Sum -Property TrafficTotal
+$SummarizedTrafficIn = $DailyBandwidthData | Measure-Object -Sum -Property TrafficIn
+$SummarizedTrafficOut = $DailyBandwidthData | Measure-Object -Sum -Property TrafficOut
 
 ###############################################################################
 # OUTPUT
 
 $XMLOutput = "<prtg>`n"
-$XMLOutput += Set-PrtgResult "Used Bandwidth" $SummarizedBandwidthData.Sum "BytesDisk" -ShowChart 
-$XMLOutput += Set-PrtgResult "Days Calculated" $SummarizedBandwidthData.Count "Days" -ShowChart
+$XMLOutput += Set-PrtgResult "Bandwidth Total" $SummarizedTrafficTotal.Sum "BytesDisk" -ShowChart
+$XMLOutput += Set-PrtgResult "Bandwidth In" $SummarizedTrafficIn.Sum "BytesDisk" -ShowChart
+$XMLOutput += Set-PrtgResult "Bandwidth Out" $SummarizedTrafficOut.Sum "BytesDisk" -ShowChart
+$XMLOutput += Set-PrtgResult "Days Calculated" ( $SummarizedTrafficTotal.Count / 24) "Days" -ShowChart
 $XMLOutput += "</prtg>"
 
 $XMLOutput
