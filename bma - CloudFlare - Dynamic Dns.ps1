@@ -1,8 +1,9 @@
 ﻿###############################################################################
 #
-# Lockstep - CloudFlare - Dynamic Dns
+# bma - CloudFlare - Dynamic Dns
 #
-
+# Create a device with the DNS record you want to update as the address.
+# Set linux user/pass to your CloudFlare Email/API Token.
 #
 # Q4 2014 brian.addicks@lockstepgroup.com
 #
