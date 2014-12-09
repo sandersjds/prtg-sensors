@@ -42,6 +42,7 @@
 #
 # PrtgShell
 # Set placeholders as environment variables must be set
+# Powershell 3+ (uses Invoke-RestMethod)
 #
 ###############################################################################
 
@@ -162,7 +163,6 @@ if ($CurrentIp -eq $RecordContent) {
 # Stop timer
 
 $TimerStop            = Get-Date
-$InitialExecutionTime = $TimerInitialExecution - $TimerStart
 $ExecutionTime        = $TimerStop - $TimerStart
 
 ###############################################################################
@@ -171,7 +171,7 @@ $ExecutionTime        = $TimerStop - $TimerStart
 $XmlOutput  = "<prtg>`n"
 
 $XmlOutput += "  <text>$Message</text>`n"
-$XMLOutput += Set-PrtgResult "Sensor Run Time" $InitialExecutionTime.TotalMilliseconds "ms"
+$XMLOutput += Set-PrtgResult "Sensor Run Time" $ExecutionTime.TotalMilliseconds "ms"
 
 $XmlOutput += "</prtg>"
 
